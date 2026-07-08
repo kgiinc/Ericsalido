@@ -41,16 +41,18 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0; }
         }
+        
         /* Geometric Shapes */
         .shape-bottom-right { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
         .shape-hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
         
-        /* Prevent text selection during long press */
-        .no-select {
+        /* Prevent selection during long press but allow touch highlight */
+        .card-container {
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            -webkit-tap-highlight-color: transparent; /* custom highlight handled by classes */
         }
     </style>
 </head>
@@ -59,7 +61,7 @@
     <!-- ================= LOADING SCREEN ================= -->
     <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out">
         <div class="text-center">
-            <h1 class="text-xl md:text-2xl font-bold leading-tight tracking-wide text-dfnn-blue">
+            <h1 class="text-2xl md:text-3xl font-bold leading-tight tracking-wide text-dfnn-blue">
                 Technology <br>
                 That <span id="dynamic-text" class="text-dfnn-yellow"></span><span class="cursor"></span> <br>
                 With You
@@ -68,9 +70,9 @@
     </div>
 
     <!-- ================= BUSINESS CARD ================= -->
-    <div id="business-card" class="opacity-0 hidden transition-opacity duration-700 ease-in-out relative w-full max-w-sm h-[700px] bg-white shadow-2xl overflow-hidden mx-4 no-select cursor-pointer">
+    <div id="business-card" class="card-container opacity-0 hidden transition-opacity duration-700 ease-in-out relative w-full max-w-sm h-[700px] bg-white shadow-2xl overflow-hidden mx-4">
         
-        <!-- Geometric Backgrounds -->
+        <!-- Geometric Backgrounds (Always visible) -->
         <div class="absolute bottom-0 right-0 w-[80%] h-[35%] bg-dfnn-yellow shape-bottom-right z-0 pointer-events-none"></div>
         <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-dfnn-blue shape-hexagon opacity-90 z-0 shadow-lg pointer-events-none"></div>
         <div class="absolute bottom-10 left-12 w-24 h-24 bg-[#1e58c8] shape-hexagon opacity-80 z-0 pointer-events-none"></div>
@@ -78,59 +80,62 @@
         <div class="absolute top-1/4 left-0 w-full h-[1px] bg-gray-200 rotate-12 z-0 pointer-events-none"></div>
         <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gray-200 -rotate-12 z-0 pointer-events-none"></div>
 
-        <!-- Card Content -->
-        <div id="card-info" class="opacity-0 transition-opacity duration-1000 ease-in-out relative w-full h-full z-10 flex flex-col">
+        <!-- ================= CARD CONTENT ================= -->
+        <div id="card-info" class="opacity-0 transition-opacity duration-500 ease-in-out relative w-full h-full z-10 flex flex-col">
             
-            <div class="pt-12 px-8 text-right flex flex-col items-end pointer-events-none">
-                <img src="image_dbfe7b.jpg" alt="DFNN Logo" class="h-10 mb-3 object-contain">
-                <h2 class="text-2xl font-bold text-dfnn-blue uppercase tracking-wider leading-none">Ramon Garcia</h2>
-                <p class="text-dfnn-yellow text-sm mt-1 uppercase tracking-widest font-semibold">Executive Chairman</p>
+            <div class="pt-14 px-8 text-right flex flex-col items-end pointer-events-none">
+                <img src="image_dbfe7b.jpg" alt="DFNN Logo" class="h-12 mb-4 object-contain">
+                <!-- Pinalaki ang fonts -->
+                <h2 class="text-3xl font-bold text-dfnn-blue uppercase tracking-wider leading-none">Ramon Garcia</h2>
+                <p class="text-dfnn-yellow text-base mt-2 uppercase tracking-widest font-bold">Executive Chairman</p>
             </div>
 
             <!-- Contacts -->
-            <div class="mt-8 px-8 z-20">
-                <ul class="space-y-4 text-right text-sm text-gray-700 font-medium">
-                    <!-- Phone Menu Trigger -->
+            <div class="mt-10 px-6 z-20">
+                <ul class="space-y-5 text-right text-base text-gray-800 font-semibold">
+                    
+                    <!-- Phone -->
                     <li>
-                        <button onclick="openMenu('phone-menu')" class="flex items-center justify-end gap-3 w-full hover:text-dfnn-blue transition-colors group">
-                            <p class="text-sm pointer-events-none">+63 917 842 1888</p>
-                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                        <!-- active:bg-blue-50 para ma-highlight pag tinap -->
+                        <button onclick="openMenu('phone-menu')" class="flex items-center justify-end gap-4 w-full p-2 rounded-lg active:bg-blue-50 hover:text-dfnn-blue transition-all group">
+                            <p class="text-base tracking-wide">+63 917 842 1888</p>
+                            <div class="w-9 h-9 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 shadow-md group-active:scale-95 transition-transform">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
                             </div>
                         </button>
                     </li>
 
-                    <!-- Email Menu Trigger -->
+                    <!-- Email -->
                     <li>
-                        <button onclick="openMenu('email-menu')" class="flex items-center justify-end gap-3 w-full hover:text-dfnn-blue transition-colors group">
-                            <p class="text-sm pointer-events-none">rcgarcia@dfnn.com</p>
-                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                        <button onclick="openMenu('email-menu')" class="flex items-center justify-end gap-4 w-full p-2 rounded-lg active:bg-blue-50 hover:text-dfnn-blue transition-all group">
+                            <p class="text-base tracking-wide">rcgarcia@dfnn.com</p>
+                            <div class="w-9 h-9 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 shadow-md group-active:scale-95 transition-transform">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
                             </div>
                         </button>
                     </li>
 
                     <!-- Website -->
                     <li>
-                        <a href="https://www.dfnn.com" target="_blank" class="flex items-center justify-end gap-3 hover:text-dfnn-blue transition-colors group">
-                            <p class="text-sm pointer-events-none">www.dfnn.com</p>
-                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
+                        <a href="https://www.dfnn.com" target="_blank" class="flex items-center justify-end gap-4 w-full p-2 rounded-lg active:bg-blue-50 hover:text-dfnn-blue transition-all group">
+                            <p class="text-base tracking-wide">www.dfnn.com</p>
+                            <div class="w-9 h-9 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 shadow-md group-active:scale-95 transition-transform">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
                             </div>
                         </a>
                     </li>
 
-                    <!-- Map Menu Trigger -->
+                    <!-- Address -->
                     <li>
-                        <button onclick="openMenu('map-menu')" class="flex items-start justify-end gap-3 pt-2 w-full hover:text-dfnn-blue transition-colors group text-right">
-                            <div class="text-xs leading-relaxed pointer-events-none">
-                                <p class="font-bold text-gray-800 group-hover:text-dfnn-blue">DFNN Head Office</p>
-                                <p>L2-L5 14/F PSE Tower,</p>
-                                <p>5th Ave cor 28th St,</p>
-                                <p>BGC, Taguig</p>
+                        <button onclick="openMenu('map-menu')" class="flex items-start justify-end gap-4 w-full p-2 rounded-lg active:bg-blue-50 hover:text-dfnn-blue transition-all group text-right">
+                            <div class="text-sm leading-relaxed tracking-wide">
+                                <p class="font-bold text-gray-900 group-hover:text-dfnn-blue">DFNN Head Office</p>
+                                <p class="font-medium text-gray-700">L2-L5 14/F PSE Tower,</p>
+                                <p class="font-medium text-gray-700">5th Ave cor 28th St,</p>
+                                <p class="font-medium text-gray-700">BGC, Taguig</p>
                             </div>
-                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
-                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                            <div class="w-9 h-9 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 mt-0.5 shadow-md group-active:scale-95 transition-transform">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
                             </div>
                         </button>
                     </li>
@@ -140,94 +145,135 @@
             <!-- Bottom Right Logo -->
             <div class="absolute bottom-6 right-6 flex items-center gap-2 pointer-events-none">
                 <div class="text-white text-right leading-tight drop-shadow-md">
-                    <span class="font-bold text-lg block tracking-wide">DFNN</span>
-                    <span class="font-semibold text-xs block opacity-90">INC.</span>
+                    <span class="font-bold text-xl block tracking-wide">DFNN</span>
+                    <span class="font-semibold text-sm block opacity-90">INC.</span>
                 </div>
             </div>
 
-            <!-- Hint for Tap & Hold -->
-            <div class="absolute bottom-4 left-6 text-xs text-white opacity-60 pointer-events-none flex flex-col items-start">
-                <span>Hold to save contact</span>
-                <span>Double tap to restart</span>
+            <!-- Hints -->
+            <div class="absolute bottom-4 left-6 text-xs text-white opacity-80 pointer-events-none flex flex-col items-start space-y-0.5">
+                <span class="flex items-center gap-1"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> Swipe up for QR</span>
+                <span class="flex items-center gap-1">⏱ Hold to save contact</span>
+                <span class="flex items-center gap-1">👆 Double tap to restart</span>
+            </div>
+        </div>
+
+        <!-- ================= QR CODE SECTION (Hidden initially) ================= -->
+        <div id="qr-section" class="absolute inset-0 z-30 flex flex-col items-center justify-center opacity-0 hidden transition-opacity duration-500 bg-white/70 backdrop-blur-md">
+            <h3 class="text-2xl font-extrabold text-dfnn-blue mb-2 shadow-sm drop-shadow-md">Scan to Connect</h3>
+            <p class="text-gray-700 font-semibold mb-6 text-sm">Save VCF Contact Info</p>
+            
+            <!-- QR Image with Logo Overlay -->
+            <div class="relative bg-white p-3 rounded-2xl shadow-2xl border-4 border-dfnn-blue">
+                <!-- Dynamically generated VCF QR -->
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=BEGIN%3AVCARD%0AVERSION%3A3.0%0AFN%3ARamon%20Garcia%0AORG%3ADFNN%20Inc.%0ATITLE%3AExecutive%20Chairman%0ATEL%3A%2B639178421888%0AEMAIL%3Arcgarcia%40dfnn.com%0AURL%3Ahttps%3A%2F%2Fwww.dfnn.com%0AEND%3AVCARD" alt="VCF QR Code" class="w-52 h-52">
+                
+                <!-- DFNN Logo overlaid in the center of QR -->
+                <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                    <div class="bg-white p-1.5 rounded shadow-md flex items-center justify-center">
+                        <img src="image_dbfe7b.jpg" alt="Logo" class="h-8 object-contain">
+                    </div>
+                </div>
             </div>
 
+            <div class="mt-12 text-sm text-dfnn-blue font-bold flex flex-col items-center animate-bounce">
+                <svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
+                Swipe up to return
+            </div>
         </div>
     </div>
 
     <!-- ================= SLIDE-UP MENUS ================= -->
-    
-    <!-- Backdrop for menus -->
-    <div id="menu-backdrop" onclick="closeAllMenus()" class="fixed inset-0 bg-black/40 z-[90] hidden opacity-0 transition-opacity duration-300"></div>
+    <div id="menu-backdrop" onclick="closeAllMenus()" class="fixed inset-0 bg-black/50 z-[90] hidden opacity-0 transition-opacity duration-300"></div>
 
     <!-- Phone Menu -->
-    <div id="phone-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div> <!-- Drag Handle -->
-        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Let's Connect</h3>
-        <div class="flex justify-center gap-8 w-full px-6">
-            <!-- Viber Icon -->
-            <a href="viber://chat?number=%2B639178421888" class="w-14 h-14 bg-[#7360f2] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 14.8c-.8-.5-1.9-.3-2.6.4l-1.6 1.7c-4.4-2.1-6.8-4.5-8.9-8.9l1.7-1.6c.7-.7.9-1.8.4-2.6L8.4 1.3C7.9.4 6.7 0 5.8.5L2.9 2C1.7 2.6.8 3.8.4 5.1-.9 9.3 1.1 14.2 4.7 17.8c3.6 3.6 8.5 5.6 12.7 4.3 1.3-.4 2.5-1.3 3.1-2.5l1.5-2.9c.5-.9.1-2.1-.8-2.6l-2.5-1.3z"/></svg>
-            </a>
-            <!-- Call Icon -->
-            <a href="tel:+639178421888" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
-            </a>
-            <!-- Text Icon -->
-            <a href="sms:+639178421888" class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
-            </a>
+    <div id="phone-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-10 pt-3 slide-menu">
+        <div class="w-14 h-1.5 bg-gray-300 rounded-full mb-6"></div>
+        <h3 class="text-2xl font-extrabold text-dfnn-blue mb-8">Let's Connect</h3>
+        
+        <div class="flex justify-center gap-10 w-full px-6">
+            <!-- Uniform DFNN Blue Colors with Labels -->
+            <div class="flex flex-col items-center">
+                <a href="viber://chat?number=%2B639178421888" class="w-16 h-16 bg-dfnn-blue rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 active:scale-95 transition-transform">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 14.8c-.8-.5-1.9-.3-2.6.4l-1.6 1.7c-4.4-2.1-6.8-4.5-8.9-8.9l1.7-1.6c.7-.7.9-1.8.4-2.6L8.4 1.3C7.9.4 6.7 0 5.8.5L2.9 2C1.7 2.6.8 3.8.4 5.1-.9 9.3 1.1 14.2 4.7 17.8c3.6 3.6 8.5 5.6 12.7 4.3 1.3-.4 2.5-1.3 3.1-2.5l1.5-2.9c.5-.9.1-2.1-.8-2.6l-2.5-1.3z"/></svg>
+                </a>
+                <span class="text-sm font-bold text-dfnn-blue mt-3">Viber</span>
+            </div>
+            
+            <div class="flex flex-col items-center">
+                <a href="tel:+639178421888" class="w-16 h-16 bg-dfnn-blue rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 active:scale-95 transition-transform">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                </a>
+                <span class="text-sm font-bold text-dfnn-blue mt-3">Call</span>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <a href="sms:+639178421888" class="w-16 h-16 bg-dfnn-blue rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 active:scale-95 transition-transform">
+                    <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+                </a>
+                <span class="text-sm font-bold text-dfnn-blue mt-3">Message</span>
+            </div>
         </div>
     </div>
 
     <!-- Email Menu -->
-    <div id="email-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div>
-        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Let's Connect</h3>
-        <a href="mailto:rcgarcia@dfnn.com" class="w-16 h-16 bg-dfnn-yellow rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
-        </a>
+    <div id="email-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-10 pt-3 slide-menu">
+        <div class="w-14 h-1.5 bg-gray-300 rounded-full mb-6"></div>
+        <h3 class="text-2xl font-extrabold text-dfnn-blue mb-8">Let's Connect</h3>
+        <div class="flex flex-col items-center">
+            <a href="mailto:rcgarcia@dfnn.com" class="w-20 h-20 bg-dfnn-blue rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 active:scale-95 transition-transform">
+                <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+            </a>
+            <span class="text-sm font-bold text-dfnn-blue mt-4">Send Email</span>
+        </div>
     </div>
 
     <!-- Map Menu -->
-    <div id="map-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
-        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div>
-        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Visit Us</h3>
-        <a href="https://www.google.com/maps/dir/?api=1&destination=PSE+Tower,+5th+Avenue+corner+28th+Street,+Bonifacio+Global+City,+Taguig" target="_blank" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
-            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
-        </a>
+    <div id="map-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.2)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-10 pt-3 slide-menu">
+        <div class="w-14 h-1.5 bg-gray-300 rounded-full mb-6"></div>
+        <h3 class="text-2xl font-extrabold text-dfnn-blue mb-8">Visit Us</h3>
+        <div class="flex flex-col items-center">
+            <a href="https://www.google.com/maps/dir/?api=1&destination=PSE+Tower,+5th+Avenue+corner+28th+Street,+Bonifacio+Global+City,+Taguig" target="_blank" class="w-20 h-20 bg-dfnn-blue rounded-full flex items-center justify-center text-white shadow-xl hover:scale-110 active:scale-95 transition-transform">
+                <svg class="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+            </a>
+            <span class="text-sm font-bold text-dfnn-blue mt-4">Open Map</span>
+        </div>
     </div>
-
 
     <!-- ================= JAVASCRIPT ================= -->
     <script>
         const words = ["connects", "moves", "grows"];
         let isAnimating = false;
+        let isShowingQR = false;
 
         document.addEventListener("DOMContentLoaded", () => {
             startLoadingSequence();
             setupInteractions();
-            setupSwipeToClose();
+            setupSwipeGestures();
         });
 
         const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
-        // --- Typing Animation & Transition ---
+        // --- Typing Animation ---
         async function startLoadingSequence() {
             if(isAnimating) return;
             isAnimating = true;
+            isShowingQR = false;
 
             const dynamicTextElement = document.getElementById("dynamic-text");
             const loadingScreen = document.getElementById('loading-screen');
             const businessCard = document.getElementById('business-card');
             const cardInfo = document.getElementById('card-info');
+            const qrSection = document.getElementById('qr-section');
 
-            // Reset initial states
+            // Resets
             dynamicTextElement.innerText = "";
             loadingScreen.style.display = 'flex';
             loadingScreen.classList.remove('opacity-0');
             businessCard.classList.add('hidden', 'opacity-0');
             cardInfo.classList.remove('opacity-100');
-            cardInfo.classList.add('opacity-0');
+            cardInfo.classList.add('opacity-0', 'hidden');
+            qrSection.classList.add('opacity-0', 'hidden');
 
             const typeSpeed = 100, deleteSpeed = 50, pauseEnd = 1200, pauseStart = 400;
 
@@ -249,12 +295,13 @@
                 await sleep(pauseStart); 
             }
 
-            // Transition out loading
+            // Show Card
             loadingScreen.classList.add('opacity-0');
             
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
                 businessCard.classList.remove('hidden');
+                cardInfo.classList.remove('hidden');
                 
                 setTimeout(() => {
                     businessCard.classList.remove('opacity-0');
@@ -263,13 +310,13 @@
                     setTimeout(() => {
                         cardInfo.classList.remove('opacity-0');
                         cardInfo.classList.add('opacity-100');
-                        isAnimating = false; // Allow restart
+                        isAnimating = false; 
                     }, 600); 
                 }, 50);
             }, 1000); 
         }
 
-        // --- Slide Up Menu Logic ---
+        // --- Slide Up Menus ---
         function openMenu(menuId) {
             const menu = document.getElementById(menuId);
             const backdrop = document.getElementById('menu-backdrop');
@@ -290,33 +337,68 @@
             setTimeout(() => backdrop.classList.add('hidden'), 300);
         }
 
-        function setupSwipeToClose() {
+        // --- Swipe Gestures Handling ---
+        function setupSwipeGestures() {
+            // Close menus on swipe down
             const menus = document.querySelectorAll('.slide-menu');
             menus.forEach(menu => {
                 let startY;
-                menu.addEventListener('touchstart', (e) => {
-                    startY = e.touches[0].clientY;
-                }, {passive: true});
-
+                menu.addEventListener('touchstart', (e) => startY = e.touches[0].clientY, {passive: true});
                 menu.addEventListener('touchmove', (e) => {
-                    let currentY = e.touches[0].clientY;
-                    if (currentY - startY > 50) { // If swiped down by 50px
-                        closeAllMenus();
-                    }
+                    if (e.touches[0].clientY - startY > 50) closeAllMenus();
                 }, {passive: true});
+            });
+
+            // Toggle QR Code on swipe up anywhere on the business card
+            const card = document.getElementById('business-card');
+            let cardStartY;
+            
+            card.addEventListener('touchstart', (e) => {
+                cardStartY = e.touches[0].clientY;
+            }, {passive: true});
+
+            card.addEventListener('touchend', (e) => {
+                let cardEndY = e.changedTouches[0].clientY;
+                // If swiped UP significantly (negative delta)
+                if (cardStartY - cardEndY > 60) {
+                    toggleQR();
+                }
             });
         }
 
-        // --- Double Tap & Hold (Long Press) Logic ---
+        function toggleQR() {
+            if(isAnimating) return;
+            const info = document.getElementById('card-info');
+            const qr = document.getElementById('qr-section');
+
+            if (!isShowingQR) {
+                // Fade out Info, Show QR
+                info.classList.add('opacity-0');
+                setTimeout(() => {
+                    info.classList.add('hidden');
+                    qr.classList.remove('hidden');
+                    setTimeout(() => qr.classList.remove('opacity-0'), 50);
+                }, 500);
+            } else {
+                // Fade out QR, Show Info
+                qr.classList.add('opacity-0');
+                setTimeout(() => {
+                    qr.classList.add('hidden');
+                    info.classList.remove('hidden');
+                    setTimeout(() => info.classList.remove('opacity-0'), 50);
+                }, 500);
+            }
+            isShowingQR = !isShowingQR;
+        }
+
+        // --- Interactions (Double tap & Long Press) ---
         function setupInteractions() {
             const card = document.getElementById('business-card');
             
-            // Double Tap
+            // Double Tap to Restart
             let lastTap = 0;
             card.addEventListener('touchend', function(e) {
-                // Prevent trigger if clicking a button inside the card
                 if(e.target.closest('button') || e.target.closest('a')) return;
-
                 let currentTime = new Date().getTime();
                 let tapLength = currentTime - lastTap;
                 
@@ -327,23 +409,13 @@
                 lastTap = currentTime;
             });
 
-            // For Desktop double click
-            card.addEventListener('dblclick', function(e) {
-                if(e.target.closest('button') || e.target.closest('a')) return;
-                startLoadingSequence();
-            });
-
             // Tap and Hold to Download vCard
             let pressTimer;
-            
             const startPress = (e) => {
                 if(e.target.closest('button') || e.target.closest('a')) return;
-                pressTimer = window.setTimeout(downloadVCard, 800); // 800ms hold
+                pressTimer = window.setTimeout(downloadVCard, 800); 
             };
-
-            const cancelPress = () => {
-                clearTimeout(pressTimer);
-            };
+            const cancelPress = () => clearTimeout(pressTimer);
 
             card.addEventListener('touchstart', startPress, {passive: true});
             card.addEventListener('touchend', cancelPress);
@@ -355,7 +427,6 @@
             card.addEventListener('mouseleave', cancelPress);
         }
 
-        // --- Generate and Download vCard ---
         function downloadVCard() {
             const vcard = `BEGIN:VCARD
 VERSION:3.0
@@ -379,7 +450,6 @@ END:VCARD`;
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            // Provide a small visual feedback (vibrate if supported)
             if (navigator.vibrate) navigator.vibrate(100);
             alert("Contact downloaded!");
         }
