@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Business Card - Juan Eric Salido</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Tinanggal ang background dito at siniguradong transparent para sa iframe embed */
+        html, body {
+            background-color: transparent !important;
+        }
+        .card-container {
+            perspective: 1000px;
+        }
+        .card-inner {
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+            /* FIX: Ensure z-index handling is clean during flip */
+            position: relative;
+        }
+        .card-flipped {
+            transform: rotateY(180deg);
+        }
+        /* FIX: added proper 3d rendering to prevent text bleed */
+        .card-front, .card-back {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Make sure front is always on top initially */
+        .card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            z-index: 1;
+        }
+        /* Geometric swoosh background via pure CSS vector simulation */
+        .swoosh-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .swoosh-yellow {
+            position: absolute;
+            bottom: -20px;
+            left: -20px;
+            width: 140px;
+            height: 90px;
+            background: #eab308;
+            transform: skewX(-35deg) rotate(-15deg);
+        }
+        .swoosh-darkblue {
+            position: absolute;
+            top: -20px;
+            left: -40px;
+            width: 160px;
+            height: 120%;
+            background: #1e3a8a;
+            transform: skewX(-25deg) rotate(-5deg);
+            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
+        }
+        .swoosh-lightblue {
+            position: absolute;
+            top: -20px;
+            left: -65px;
+            width: 155px;
+            height: 120%;
+            background: #3b82f6;
+            transform: skewX(-25deg) rotate(-5deg);
+        }
+        .swoosh-white-gradient {
+            position: absolute;
+            top: -20px;
+            left: 60px;
+            width: 60px;
+            height: 120%;
+            background: linear-gradient(90deg, rgba(241,245,249,1) 0%, rgba(255,255,255,0) 100%);
+            transform: skewX(-25deg) rotate(-5deg);
+            opacity: 0.8;
+        }
+
+        /* FIX: Scaling effect on hover/touch for contact links */
+        .contact-link {
+            transition: all 0.2s ease-in-out;
+            transform-origin: right center;
+        }
+        .contact-link:hover, .contact-link:active {
+            transform: scale(1.1);
+            color: #2563eb !important; /* text-blue-600 */
+        }
+        .contact-link i {
+            transition: transform 0.2s ease-in-out;
+        }
+        .contact-link:hover i, .contact-link:active i {
+            color: #2563eb;
+            transform: scale(1.2);
+        }
+    </style>
+</head>
+<body class="bg-transparent m-0 py-4 w-full flex flex-col items-center text-slate-800 selection:bg-blue-200">
+
+    <div id="toast" class="fixed top-6 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transform -translate-y-4 transition-all duration-300 z-50 flex items-center gap-2 pointer-events-none font-medium">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Contact Info Saved! (vCard Downloaded)</span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="w-full max-w-md px-2 flex flex-col items-center gap-6">
+        
+        <!-- Interactive Card -->
+        <div class="card-container w-full h-[250px] sm:h-[260px] cursor-pointer drop-shadow-[0_15px_25px_rgba(0,0,0,0.3)]" id="cardContainer">
+            <div class="card-inner w-full h-full" id="cardInner">
+                
+                <!-- FRONT OF THE CARD (Details Side) -->
+                <div class="card-front bg-white rounded-xl overflow-hidden p-6 flex flex-col justify-between shadow-inner select-none">
+                    <!-- Geometric Background Graphic -->
+                    <div class="swoosh-bg">
+                        <div class="swoosh-white-gradient"></div>
+                        <div class="swoosh-lightblue"></div>
+                        <div class="swoosh-darkblue"></div>
+                        <div class="swoosh-yellow"></div>
+                    </div>
+
+                    <!-- Top Row: Logo Placeholder -->
+                    <div class="w-full flex justify-end items-start relative z-10">
+                        <div class="absolute top-0 right-2 z-20">
+                            <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-10 w-auto object-contain">
+                        </div>
+                    </div><br><br>
+                    
+                    <!-- Middle Row: Personal Info -->
+                    <div class="pl-14 sm:pl-16 relative z-10 my-auto">
+                        <h1 class="text-xl sm:text-2xl font-bold tracking-wide text-slate-900 leading-none">JUAN ERIC SALIDO</h1>
+                        <div class="w-28 h-[2px] bg-slate-400 my-1"></div>
+                        <p class="text-[9px] sm:text-[10px] font-semibold text-slate-600 tracking-widest uppercase">EXECUTIVE VICE PRESIDENT</p>
+                    </div>
+
+                    <!-- Bottom Row: Contact Info Grid -->
+                    <div class="w-full flex flex-col items-end text-right text-[8px] sm:text-[9.5px] font-medium text-slate-700 space-y-0.5 relative z-10 pl-16">
+                        <!-- Phone Numbers with .contact-link class for scaling -->
+                        <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391', '+63 917 536 7391')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
+                            <span>+63917 536 7391</span>
+                            <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
+                        </div>
+                        <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189', '+63 999 228 0189')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
+                            <span>+63999 228 0189</span>
+                            <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
+                        </div>
+                        <!-- Emails -->
+                        <a href="mailto:eric.salido@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
+                            <span>eric.salido@kgi.com.ph</span>
+                            <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
+                        </a>
+                        <a href="mailto:kgi.corporate@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
+                            <span>kgi.corporate@kgi.com.ph</span>
+                            <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
+                        </a>
+                        <!-- Address -->
+                        <div onclick="event.stopPropagation(); openMap();" class="contact-link flex items-start justify-end gap-1.5 cursor-pointer py-0.5 max-w-[240px] text-right pr-2">
+                            <span class="leading-tight">PSE Tower, 14F, 5th ave. cor 28 street,<br>Bonifacio Global City, Taguig, Philippines</span>
+                            <i class="fa-solid fa-location-dot text-slate-400 text-[8px] mt-0.5"></i>
+                        </div>
+                        <!-- Website -->
+                        <a href="http://www.fastwin.ph" target="_blank" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 font-semibold pr-2">
+                            <span>www.fastwin.ph</span>
+                            <i class="fa-solid fa-globe text-slate-400 text-[8px]"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- BACK OF THE CARD (Logo Side) -->
+                <div class="card-back bg-white rounded-xl overflow-hidden p-6 flex items-center justify-center shadow-inner select-none">
+                    <!-- Geometric Background Graphic -->
+                    <div class="swoosh-bg">
+                        <div class="swoosh-white-gradient"></div>
+                        <div class="swoosh-lightblue"></div>
+                        <div class="swoosh-darkblue"></div>
+                        <div class="swoosh-yellow"></div>
+                    </div>
+
+                    <!-- Center Brand Logo Placeholder -->
+                    <div class="relative z-10 flex flex-col items-center">
+                        <img src="https://lh3.googleusercontent.com/pw/AP1GczNG6dtrPWcelY2Y1EQlZzM0gDH5nU6SYOpTuVzz3MksF8gXJUJgFF7XXgcbikzyKFs-k4zmRO6Pq9IHYIVWplY8Ka_gUMKDWc3ruO00tNNrXu8uslLmiprApA9iSjxZStmdA80mVmyyivjh6RFTyEn0=w600-h300-s-no-gm?authuser=0" alt="Main Logo">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="w-full text-center text-slate-500 text-sm">
+            <p class="animate-pulse text-xs bg-slate-100/80 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-200 shadow-sm">
+                <i class="fa-solid fa-pointer mr-1"></i> Tap the card to flip it. Double-tap to save contacts..
+            </p>
+        </div>
+
+    </div>
+
+    <!-- Action Sheet / Modal for Phone Options -->
+    <div id="phoneModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end justify-center opacity-0 pointer-events-none transition-opacity duration-300" onclick="closePhoneOptions()">
+        <div class="bg-white w-full max-w-md rounded-t-2xl p-6 space-y-4 transform translate-y-full transition-transform duration-300 onclick-stop" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-phone text-blue-600"></i>
+                    <span id="modalPhoneNumberLabel">+63917 536 7391</span>
+                </h3>
+                <button onclick="closePhoneOptions()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            
+            <!-- Options Grid -->
+            <div class="grid grid-cols-3 gap-3">
+                <!-- Viber -->
+                <a id="viberLink" href="#" class="flex flex-col items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl transition-all text-purple-700 group">
+                    <i class="fa-brands fa-viber text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold">Viber</span>
+                </a>
+                <!-- Regular Call -->
+                <a id="callLink" href="#" class="flex flex-col items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-all text-blue-700 group">
+                    <i class="fa-solid fa-phone-flip text-2xl mb-2.5 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold">Tawag</span>
+                </a>
+                <!-- Text / SMS -->
+                <a id="smsLink" href="#" class="flex flex-col items-center justify-center p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all text-slate-700 group">
+                    <i class="fa-solid fa-comment-sms text-2xl mb-2.5 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold">Text (SMS)</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Functionalities -->
+    <script>
+        const cardContainer = document.getElementById('cardContainer');
+        const cardInner = document.getElementById('cardInner');
+        const toast = document.getElementById('toast');
+        const phoneModal = document.getElementById('phoneModal');
+        const phoneModalContent = phoneModal.querySelector('.onclick-stop');
+        
+        let lastTap = 0;
+
+        // Flip Card Action
+        function flipCard() {
+            cardInner.classList.toggle('card-flipped');
+        }
+
+        // Card Container Click/Tap Manager (Handles Flip vs Double Tap Save)
+        cardContainer.addEventListener('click', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            
+            if (tapLength < 300 && tapLength > 0) {
+                // Double tap recognized
+                downloadVCard();
+                e.preventDefault();
+            } else {
+                // Single tap - Flip Card
+                flipCard();
+            }
+            lastTap = currentTime;
+        });
+
+        // Open Map Destination
+        function openMap() {
+            const address = "PSE Tower, 14F, 5th ave. cor 28 street, Bonifacio Global City, Taguig, Philippines";
+            // Check for iOS device to choose Apple Maps or Google Maps format natively
+            if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1)) {
+                window.open(`maps://maps.apple.com/?q=${encodeURIComponent(address)}`);
+            } else {
+                window.open(`https://maps.google.com/?q=${encodeURIComponent(address)}`);
+            }
+        }
+
+        // Show Options for Phone Number (Viber, Call, Txt)
+        function showPhoneOptions(rawNum, formattedNum) {
+            document.getElementById('modalPhoneNumberLabel').innerText = formattedNum;
+            
+            // Set dynamic links
+            document.getElementById('callLink').href = `tel:${rawNum}`;
+            document.getElementById('smsLink').href = `sms:${rawNum}`;
+            // Viber format link
+            const viberNum = rawNum.replace('+', '');
+            document.getElementById('viberLink').href = `viber://chat?number=${viberNum}`;
+
+            // Show animation
+            phoneModal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                phoneModalContent.classList.remove('translate-y-full');
+            }, 10);
+        }
+
+        function closePhoneOptions() {
+            phoneModalContent.classList.add('translate-y-full');
+            setTimeout(() => {
+                phoneModal.classList.add('opacity-0', 'pointer-events-none');
+            }, 300);
+        }
+
+        // vCard Generation & Download Function
+        function downloadVCard() {
+            const vcardData = `BEGIN:VCARD
+VERSION:3.0
+N:Salido;Juan Eric;;;
+FN:Juan Eric Salido
+ORG:Kirschner Games International Inc.
+TITLE:Executive Vice President
+TEL;TYPE=CELL,VOICE:+639175367391
+TEL;TYPE=CELL,VOICE:+639992280189
+EMAIL;TYPE=PREF,INTERNET:eric.salido@kgi.com.ph
+EMAIL;TYPE=INTERNET:kgi.corporate@kgi.com.ph
+ADR;TYPE=WORK:;;14F, PSE Tower, 5th Ave cor 28th St;Bonifacio Global City;Taguig;;Philippines
+URL:https://www.fastwin.ph
+END:VCARD`;
+
+            const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const newLink = document.createElement('a');
+            newLink.href = url;
+            newLink.setAttribute('download', 'Juan_Eric_Salido.vcf');
+            document.body.appendChild(newLink);
+            newLink.click();
+            document.body.removeChild(newLink);
+
+            // Trigger success toast
+            toast.classList.remove('opacity-0', '-translate-y-4');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', '-translate-y-4');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
