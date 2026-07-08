@@ -11,23 +11,40 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-   
+        /* Tinanggal ang background dito at siniguradong transparent para sa iframe embed */
+        html, body {
+            background-color: transparent !important;
+        }
         .card-container {
             perspective: 1000px;
         }
         .card-inner {
             transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
             transform-style: preserve-3d;
+            /* FIX: Ensure z-index handling is clean during flip */
+            position: relative;
         }
         .card-flipped {
             transform: rotateY(180deg);
         }
+        /* FIX: added proper 3d rendering to prevent text bleed */
         .card-front, .card-back {
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        /* Make sure front is always on top initially */
+        .card-front {
+            z-index: 2;
+            transform: rotateY(0deg);
         }
         .card-back {
             transform: rotateY(180deg);
+            z-index: 1;
         }
         /* Geometric swoosh background via pure CSS vector simulation */
         .swoosh-bg {
@@ -78,25 +95,41 @@
             transform: skewX(-25deg) rotate(-5deg);
             opacity: 0.8;
         }
+
+        /* FIX: Scaling effect on hover/touch for contact links */
+        .contact-link {
+            transition: all 0.2s ease-in-out;
+            transform-origin: right center;
+        }
+        .contact-link:hover, .contact-link:active {
+            transform: scale(1.1);
+            color: #2563eb !important; /* text-blue-600 */
+        }
+        .contact-link i {
+            transition: transform 0.2s ease-in-out;
+        }
+        .contact-link:hover i, .contact-link:active i {
+            color: #2563eb;
+            transform: scale(1.2);
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center p-4 text-slate-800 selection:bg-blue-200">
+<body class="bg-transparent m-0 py-4 w-full flex flex-col items-center text-slate-800 selection:bg-blue-200">
 
-    
     <div id="toast" class="fixed top-6 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transform -translate-y-4 transition-all duration-300 z-50 flex items-center gap-2 pointer-events-none font-medium">
         <i class="fa-solid fa-circle-check"></i>
         <span>Contact Info Saved! (vCard Downloaded)</span>
     </div>
 
     <!-- Main Container -->
-    <div class="w-full max-w-md flex flex-col items-center gap-6">
+    <div class="w-full max-w-md px-2 flex flex-col items-center gap-6">
         
         <!-- Interactive Card -->
-        <div class="card-container w-full h-[250px] sm:h-[260px] cursor-pointer drop-shadow-[0_20px_35px_rgba(0,0,0,0.5)]" id="cardContainer">
-            <div class="card-inner w-full h-full relative" id="cardInner">
+        <div class="card-container w-full h-[250px] sm:h-[260px] cursor-pointer drop-shadow-[0_15px_25px_rgba(0,0,0,0.3)]" id="cardContainer">
+            <div class="card-inner w-full h-full" id="cardInner">
                 
                 <!-- FRONT OF THE CARD (Details Side) -->
-                <div class="card-front absolute w-full h-full bg-white rounded-xl overflow-hidden p-6 flex flex-col justify-between shadow-inner select-none">
+                <div class="card-front bg-white rounded-xl overflow-hidden p-6 flex flex-col justify-between shadow-inner select-none">
                     <!-- Geometric Background Graphic -->
                     <div class="swoosh-bg">
                         <div class="swoosh-white-gradient"></div>
@@ -105,12 +138,13 @@
                         <div class="swoosh-yellow"></div>
                     </div>
 
-                    <!-- Top Row: Logo Placeholder (Pinalitan ang KGI Logo) -->
+                    <!-- Top Row: Logo Placeholder -->
                     <div class="w-full flex justify-end items-start relative z-10">
                         <div class="absolute top-0 right-2 z-20">
-    <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-10 w-auto object-contain">
-</div>
+                            <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-10 w-auto object-contain">
+                        </div>
                     </div><br><br>
+                    
                     <!-- Middle Row: Personal Info -->
                     <div class="pl-14 sm:pl-16 relative z-10 my-auto">
                         <h1 class="text-xl sm:text-2xl font-bold tracking-wide text-slate-900 leading-none">JUAN ERIC SALIDO</h1>
@@ -120,31 +154,31 @@
 
                     <!-- Bottom Row: Contact Info Grid -->
                     <div class="w-full flex flex-col items-end text-right text-[8px] sm:text-[9.5px] font-medium text-slate-700 space-y-0.5 relative z-10 pl-16">
-                        <!-- Phone Numbers -->
-                        <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391', '+63 917 536 7391')" class="hover:text-blue-600 transition-colors flex items-center justify-end gap-1.5 cursor-pointer py-0.5">
+                        <!-- Phone Numbers with .contact-link class for scaling -->
+                        <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391', '+63 917 536 7391')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
                             <span>+63917 536 7391</span>
                             <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
                         </div>
-                        <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189', '+63 999 228 0189')" class="hover:text-blue-600 transition-colors flex items-center justify-end gap-1.5 cursor-pointer py-0.5">
+                        <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189', '+63 999 228 0189')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
                             <span>+63999 228 0189</span>
                             <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
                         </div>
                         <!-- Emails -->
-                        <a href="mailto:eric.salido@kgi.com.ph" onclick="event.stopPropagation();" class="hover:text-blue-600 transition-colors flex items-center justify-end gap-1.5 py-0.5">
+                        <a href="mailto:eric.salido@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
                             <span>eric.salido@kgi.com.ph</span>
                             <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
                         </a>
-                        <a href="mailto:kgi.corporate@kgi.com.ph" onclick="event.stopPropagation();" class="hover:text-blue-600 transition-colors flex items-center justify-end gap-1.5 py-0.5">
+                        <a href="mailto:kgi.corporate@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
                             <span>kgi.corporate@kgi.com.ph</span>
                             <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
                         </a>
                         <!-- Address -->
-                        <div onclick="event.stopPropagation(); openMap();" class="hover:text-blue-600 transition-colors flex items-start justify-end gap-1.5 cursor-pointer py-0.5 max-w-[240px] text-right">
+                        <div onclick="event.stopPropagation(); openMap();" class="contact-link flex items-start justify-end gap-1.5 cursor-pointer py-0.5 max-w-[240px] text-right pr-2">
                             <span class="leading-tight">PSE Tower, 14F, 5th ave. cor 28 street,<br>Bonifacio Global City, Taguig, Philippines</span>
                             <i class="fa-solid fa-location-dot text-slate-400 text-[8px] mt-0.5"></i>
                         </div>
                         <!-- Website -->
-                        <a href="http://www.fastwin.ph" target="_blank" onclick="event.stopPropagation();" class="hover:text-blue-600 transition-colors flex items-center justify-end gap-1.5 py-0.5 font-semibold">
+                        <a href="http://www.fastwin.ph" target="_blank" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 font-semibold pr-2">
                             <span>www.fastwin.ph</span>
                             <i class="fa-solid fa-globe text-slate-400 text-[8px]"></i>
                         </a>
@@ -152,7 +186,7 @@
                 </div>
 
                 <!-- BACK OF THE CARD (Logo Side) -->
-                <div class="card-back absolute w-full h-full bg-white rounded-xl overflow-hidden p-6 flex items-center justify-center shadow-inner select-none">
+                <div class="card-back bg-white rounded-xl overflow-hidden p-6 flex items-center justify-center shadow-inner select-none">
                     <!-- Geometric Background Graphic -->
                     <div class="swoosh-bg">
                         <div class="swoosh-white-gradient"></div>
@@ -161,19 +195,18 @@
                         <div class="swoosh-yellow"></div>
                     </div>
 
-                    <!-- Center Brand Logo Placeholder (Pinalitan ang Fast Win) -->
+                    <!-- Center Brand Logo Placeholder -->
                     <div class="relative z-10 flex flex-col items-center">
-                        <!-- Ilagay ang source ng iyong main logo sa src attribute ng img tag na ito -->
-                        <img src="https://lh3.googleusercontent.com/pw/AP1GczNG6dtrPWcelY2Y1EQlZzM0gDH5nU6SYOpTuVzz3MksF8gXJUJgFF7XXgcbikzyKFs-k4zmRO6Pq9IHYIVWplY8Ka_gUMKDWc3ruO00tNNrXu8uslLmiprApA9iSjxZStmdA80mVmyyivjh6RFTyEn0=w600-h300-s-no-gm?authuser=0">
+                        <img src="https://lh3.googleusercontent.com/pw/AP1GczNG6dtrPWcelY2Y1EQlZzM0gDH5nU6SYOpTuVzz3MksF8gXJUJgFF7XXgcbikzyKFs-k4zmRO6Pq9IHYIVWplY8Ka_gUMKDWc3ruO00tNNrXu8uslLmiprApA9iSjxZStmdA80mVmyyivjh6RFTyEn0=w600-h300-s-no-gm?authuser=0" alt="Main Logo">
                     </div>
                 </div>
 
             </div>
         </div>
 
-        <!-- Instructions (Inalis na ang mga buttons) -->
-        <div class="w-full text-center text-slate-400 text-sm">
-            <p class="animate-pulse text-xs bg-slate-800/50 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-700/50 text-slate-300">
+        <!-- Instructions -->
+        <div class="w-full text-center text-slate-500 text-sm">
+            <p class="animate-pulse text-xs bg-slate-100/80 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-200 shadow-sm">
                 <i class="fa-solid fa-pointer mr-1"></i> Tap the card to flip it. Double-tap to save contacts..
             </p>
         </div>
@@ -250,7 +283,7 @@
             if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1)) {
                 window.open(`maps://maps.apple.com/?q=${encodeURIComponent(address)}`);
             } else {
-                window.open(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`);
+                window.open(`https://maps.google.com/?q=${encodeURIComponent(address)}`);
             }
         }
 
@@ -261,7 +294,7 @@
             // Set dynamic links
             document.getElementById('callLink').href = `tel:${rawNum}`;
             document.getElementById('smsLink').href = `sms:${rawNum}`;
-            // Viber format link: viber://chat?number=639175367391 (strip plus for standard viber format)
+            // Viber format link
             const viberNum = rawNum.replace('+', '');
             document.getElementById('viberLink').href = `viber://chat?number=${viberNum}`;
 
