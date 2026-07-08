@@ -3,211 +3,136 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ERIC SALIDO Executive Vice Prident of KGI INC></title></title>
+    <title>Digital Business Card - Juan Eric Salido</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Tinanggal ang background dito at siniguradong transparent para sa iframe embed */
+        /* Transparent para sa iframe embed */
         html, body {
             background-color: transparent !important;
+            font-family: 'Montserrat', sans-serif;
         }
-        .card-container {
-            perspective: 1000px;
-        }
-        .card-inner {
-            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-            /* FIX: Ensure z-index handling is clean during flip */
-            position: relative;
-        }
-        .card-flipped {
-            transform: rotateY(180deg);
-        }
-        /* FIX: added proper 3d rendering to prevent text bleed */
-        .card-front, .card-back {
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
-        /* Make sure front is always on top initially */
-        .card-front {
-            z-index: 2;
-            transform: rotateY(0deg);
-        }
-        .card-back {
-            transform: rotateY(180deg);
-            z-index: 1;
-        }
-        /* Geometric swoosh background via pure CSS vector simulation */
-        .swoosh-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .swoosh-yellow {
-            position: absolute;
-            bottom: -20px;
-            left: -20px;
-            width: 140px;
-            height: 90px;
-            background: #eab308;
-            transform: skewX(-35deg) rotate(-15deg);
-        }
-        .swoosh-darkblue {
-            position: absolute;
-            top: -20px;
-            left: -40px;
-            width: 160px;
-            height: 120%;
-            background: #1e3a8a;
-            transform: skewX(-25deg) rotate(-5deg);
-            box-shadow: 5px 0 15px rgba(0,0,0,0.2);
-        }
-        .swoosh-lightblue {
-            position: absolute;
-            top: -20px;
-            left: -65px;
-            width: 155px;
-            height: 120%;
-            background: #3b82f6;
-            transform: skewX(-25deg) rotate(-5deg);
-        }
-        .swoosh-white-gradient {
-            position: absolute;
-            top: -20px;
-            left: 60px;
-            width: 60px;
-            height: 120%;
-            background: linear-gradient(90deg, rgba(241,245,249,1) 0%, rgba(255,255,255,0) 100%);
-            transform: skewX(-25deg) rotate(-5deg);
-            opacity: 0.8;
-        }
-
-        /* FIX: Scaling effect on hover/touch for contact links */
+        
+        /* Contact scaling hover effect */
         .contact-link {
             transition: all 0.2s ease-in-out;
-            transform-origin: right center;
+            transform-origin: left center;
+            display: inline-block;
         }
         .contact-link:hover, .contact-link:active {
-            transform: scale(1.1);
-            color: #2563eb !important; /* text-blue-600 */
+            transform: scale(1.05);
+            color: #2563eb !important; 
         }
-        .contact-link i {
+        .contact-icon-wrapper {
             transition: transform 0.2s ease-in-out;
         }
-        .contact-link:hover i, .contact-link:active i {
+        .group:hover .contact-icon-wrapper, .group:active .contact-icon-wrapper {
             color: #2563eb;
-            transform: scale(1.2);
+            transform: scale(1.15);
         }
     </style>
 </head>
 <body class="bg-transparent m-0 py-4 w-full flex flex-col items-center text-slate-800 selection:bg-blue-200">
 
-    <div id="toast" class="fixed top-6 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transform -translate-y-4 transition-all duration-300 z-50 flex items-center gap-2 pointer-events-none font-medium">
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed top-6 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transform -translate-y-4 transition-all duration-300 z-50 flex items-center gap-2 pointer-events-none font-medium text-sm sm:text-base">
         <i class="fa-solid fa-circle-check"></i>
         <span>Contact Info Saved! (vCard Downloaded)</span>
     </div>
 
-    <!-- Main Container -->
-    <div class="w-full max-w-md px-2 flex flex-col items-center gap-6">
+    <!-- Main Container (Portrait Mode) -->
+    <div class="w-full max-w-[340px] px-2 flex flex-col items-center gap-6">
         
-        <!-- Interactive Card -->
-        <div class="card-container w-full h-[250px] sm:h-[260px] cursor-pointer drop-shadow-[0_15px_25px_rgba(0,0,0,0.3)]" id="cardContainer">
-            <div class="card-inner w-full h-full" id="cardInner">
+        <!-- Interactive Card (Portrait Height, No Flip) -->
+        <div class="w-full h-[520px] cursor-pointer drop-shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white rounded-2xl overflow-hidden relative shadow-inner select-none flex flex-col" id="cardContainer">
+            
+            <!-- Background Geometric Shapes (KGI Colors + Inspiration Layout) -->
+            <!-- Top Right -->
+            <div class="absolute top-[-50px] right-[-30px] w-40 h-24 bg-blue-900 transform rotate-[-25deg] z-0 shadow-lg"></div>
+            <div class="absolute top-[-50px] right-[-60px] w-40 h-24 bg-blue-500 transform rotate-[-25deg] z-0"></div>
+            
+            <!-- Bottom Left/Full Width -->
+            <div class="absolute bottom-[-50px] left-[-30px] w-[130%] h-32 bg-blue-900 transform rotate-[-15deg] z-0 shadow-lg"></div>
+            <div class="absolute bottom-[-65px] left-[-30px] w-[130%] h-32 bg-blue-500 transform rotate-[-15deg] z-0"></div>
+            <div class="absolute bottom-[-80px] left-[-30px] w-[130%] h-32 bg-yellow-500 transform rotate-[-15deg] z-0"></div>
+
+            <!-- Top Row: Logo Placeholder -->
+            <div class="absolute top-6 right-6 z-20">
+                <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-8 w-auto object-contain">
+            </div>
+            
+            <!-- Content Wrapper -->
+            <div class="relative z-10 flex flex-col h-full px-8 pt-16 pb-8">
                 
-                <!-- FRONT OF THE CARD (Details Side) -->
-                <div class="card-front bg-white rounded-xl overflow-hidden p-6 flex flex-col justify-between shadow-inner select-none">
-                    <!-- Geometric Background Graphic -->
-                    <div class="swoosh-bg">
-                        <div class="swoosh-white-gradient"></div>
-                        <div class="swoosh-lightblue"></div>
-                        <div class="swoosh-darkblue"></div>
-                        <div class="swoosh-yellow"></div>
-                    </div>
+                <!-- Name & Title -->
+                <div class="mb-8 mt-4">
+                    <h1 class="text-[26px] font-bold tracking-tight leading-none uppercase">
+                        <span class="text-blue-600 block">JUAN ERIC</span>
+                        <span class="text-slate-400 font-light block mt-1">SALIDO</span>
+                    </h1>
+                    <p class="text-xs font-semibold text-slate-700 mt-2 uppercase tracking-wide">Executive Vice President</p>
+                    <div class="w-10 h-[3px] bg-blue-500 mt-3 rounded-full"></div>
+                </div>
 
-                    <!-- Top Row: Logo Placeholder -->
-                    <div class="w-full flex justify-end items-start relative z-10">
-                        <div class="absolute top-0 right-2 z-20">
-                            <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-10 w-auto object-contain">
-                        </div>
-                    </div><br><br>
+                <!-- Contact Info Grid (Left Aligned with Icons) -->
+                <div class="flex flex-col gap-5 mt-4">
                     
-                    <!-- Middle Row: Personal Info -->
-                    <div class="pl-14 sm:pl-16 relative z-10 my-auto">
-                        <h1 class="text-xl sm:text-2xl font-bold tracking-wide text-slate-900 leading-none">JUAN ERIC SALIDO</h1>
-                        <div class="w-28 h-[2px] bg-slate-400 my-1"></div>
-                        <p class="text-[9px] sm:text-[10px] font-semibold text-slate-600 tracking-widest uppercase">EXECUTIVE VICE PRESIDENT</p>
+                    <!-- Phone Numbers -->
+                    <div class="flex items-start gap-4 group">
+                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
+                            <i class="fa-solid fa-phone text-[16px]"></i>
+                        </div>
+                        <div class="flex flex-col space-y-1.5">
+                            <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391')" class="contact-link cursor-pointer text-xs font-bold text-slate-700">+63917 536 7391</div>
+                            <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189')" class="contact-link cursor-pointer text-xs font-bold text-slate-700">+63999 228 0189</div>
+                        </div>
                     </div>
 
-                    <!-- Bottom Row: Contact Info Grid -->
-                    <div class="w-full flex flex-col items-end text-right text-[8px] sm:text-[9.5px] font-medium text-slate-700 space-y-0.5 relative z-10 pl-16">
-                        <!-- Phone Numbers with .contact-link class for scaling -->
-                        <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391', '+63 917 536 7391')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
-                            <span>+63917 536 7391</span>
-                            <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
+                    <!-- Emails -->
+                    <div class="flex items-start gap-4 group">
+                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
+                            <i class="fa-solid fa-envelope text-[16px]"></i>
                         </div>
-                        <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189', '+63 999 228 0189')" class="contact-link flex items-center justify-end gap-1.5 cursor-pointer py-0.5 pr-2">
-                            <span>+63999 228 0189</span>
-                            <i class="fa-solid fa-phone text-slate-400 text-[8px]"></i>
+                        <div class="flex flex-col space-y-1.5">
+                            <div onclick="event.stopPropagation(); window.location.href='mailto:eric.salido@kgi.com.ph';" class="contact-link cursor-pointer text-xs font-bold text-slate-700">eric.salido@kgi.com.ph</div>
+                            <div onclick="event.stopPropagation(); window.location.href='mailto:kgi.corporate@kgi.com.ph';" class="contact-link cursor-pointer text-xs font-bold text-slate-700">kgi.corporate@kgi.com.ph</div>
                         </div>
-                        <!-- Emails -->
-                        <a href="mailto:eric.salido@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
-                            <span>eric.salido@kgi.com.ph</span>
-                            <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
-                        </a>
-                        <a href="mailto:kgi.corporate@kgi.com.ph" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 pr-2">
-                            <span>kgi.corporate@kgi.com.ph</span>
-                            <i class="fa-solid fa-envelope text-slate-400 text-[8px]"></i>
-                        </a>
-                        <!-- Address -->
-                        <div onclick="event.stopPropagation(); openMap();" class="contact-link flex items-start justify-end gap-1.5 cursor-pointer py-0.5 max-w-[240px] text-right pr-2">
-                            <span class="leading-tight">PSE Tower, 14F, 5th ave. cor 28 street,<br>Bonifacio Global City, Taguig, Philippines</span>
-                            <i class="fa-solid fa-location-dot text-slate-400 text-[8px] mt-0.5"></i>
-                        </div>
-                        <!-- Website -->
-                        <a href="http://www.fastwin.ph" target="_blank" onclick="event.stopPropagation();" class="contact-link flex items-center justify-end gap-1.5 py-0.5 font-semibold pr-2">
-                            <span>www.fastwin.ph</span>
-                            <i class="fa-solid fa-globe text-slate-400 text-[8px]"></i>
-                        </a>
                     </div>
+
+                    <!-- Website -->
+                    <div class="flex items-start gap-4 group">
+                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
+                            <i class="fa-solid fa-globe text-[16px]"></i>
+                        </div>
+                        <div class="flex flex-col space-y-1.5">
+                            <div onclick="event.stopPropagation(); window.open('http://www.fastwin.ph', '_blank');" class="contact-link cursor-pointer text-xs font-bold text-slate-700">www.fastwin.ph</div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="flex items-start gap-4 group">
+                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
+                            <i class="fa-solid fa-location-dot text-[16px]"></i>
+                        </div>
+                        <div class="flex flex-col space-y-1.5 pr-2">
+                            <div onclick="event.stopPropagation(); openMap();" class="contact-link cursor-pointer text-xs font-semibold text-slate-600 leading-snug">
+                                PSE Tower, 14F, 5th ave. cor 28 street,<br>Bonifacio Global City, Taguig, Philippines
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-
-                <!-- BACK OF THE CARD (Logo Side) -->
-                <div class="card-back bg-white rounded-xl overflow-hidden p-6 flex items-center justify-center shadow-inner select-none">
-                    <!-- Geometric Background Graphic -->
-                    <div class="swoosh-bg">
-                        <div class="swoosh-white-gradient"></div>
-                        <div class="swoosh-lightblue"></div>
-                        <div class="swoosh-darkblue"></div>
-                        <div class="swoosh-yellow"></div>
-                    </div>
-
-                    <!-- Center Brand Logo Placeholder -->
-                    <div class="relative z-10 flex flex-col items-center">
-                        <img src="https://lh3.googleusercontent.com/pw/AP1GczNG6dtrPWcelY2Y1EQlZzM0gDH5nU6SYOpTuVzz3MksF8gXJUJgFF7XXgcbikzyKFs-k4zmRO6Pq9IHYIVWplY8Ka_gUMKDWc3ruO00tNNrXu8uslLmiprApA9iSjxZStmdA80mVmyyivjh6RFTyEn0=w600-h300-s-no-gm?authuser=0" alt="Main Logo">
-                    </div>
-                </div>
-
             </div>
         </div>
 
         <!-- Instructions -->
-        <div class="w-full text-center text-slate-500 text-sm">
-            <p class="animate-pulse text-xs bg-slate-100/80 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-200 shadow-sm">
-                <i class="fa-solid fa-pointer mr-1"></i> Tap the card to flip it. Double-tap to save contacts..
+        <div class="w-full text-center text-slate-500 text-[11px] sm:text-xs">
+            <p class="animate-pulse bg-slate-100/80 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-200 shadow-sm">
+                <i class="fa-solid fa-pointer mr-1"></i> Double-tap to save contact info.
             </p>
         </div>
 
@@ -219,9 +144,10 @@
             <div class="flex justify-between items-center border-b pb-3">
                 <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
                     <i class="fa-solid fa-phone text-blue-600"></i>
-                    <span id="modalPhoneNumberLabel">+63917 536 7391</span>
+                    <!-- Pinalitan ang display text papuntang "Contact Me" -->
+                    <span>Contact Me</span>
                 </h3>
-                <button onclick="closePhoneOptions()" class="text-slate-400 hover:text-slate-600 p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+                <button onclick="closePhoneOptions()" class="text-slate-400 hover:text-slate-600 p-1 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <!-- Options Grid -->
@@ -248,19 +174,13 @@
     <!-- JavaScript Functionalities -->
     <script>
         const cardContainer = document.getElementById('cardContainer');
-        const cardInner = document.getElementById('cardInner');
         const toast = document.getElementById('toast');
         const phoneModal = document.getElementById('phoneModal');
         const phoneModalContent = phoneModal.querySelector('.onclick-stop');
         
         let lastTap = 0;
 
-        // Flip Card Action
-        function flipCard() {
-            cardInner.classList.toggle('card-flipped');
-        }
-
-        // Card Container Click/Tap Manager (Handles Flip vs Double Tap Save)
+        // Card Container Click/Tap Manager (Double Tap Save only)
         cardContainer.addEventListener('click', function(e) {
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTap;
@@ -269,17 +189,14 @@
                 // Double tap recognized
                 downloadVCard();
                 e.preventDefault();
-            } else {
-                // Single tap - Flip Card
-                flipCard();
             }
+            // Tinanggal na ang single tap for flip
             lastTap = currentTime;
         });
 
         // Open Map Destination
         function openMap() {
             const address = "PSE Tower, 14F, 5th ave. cor 28 street, Bonifacio Global City, Taguig, Philippines";
-            // Check for iOS device to choose Apple Maps or Google Maps format natively
             if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1)) {
                 window.open(`maps://maps.apple.com/?q=${encodeURIComponent(address)}`);
             } else {
@@ -288,13 +205,11 @@
         }
 
         // Show Options for Phone Number (Viber, Call, Txt)
-        function showPhoneOptions(rawNum, formattedNum) {
-            document.getElementById('modalPhoneNumberLabel').innerText = formattedNum;
-            
-            // Set dynamic links
+        function showPhoneOptions(rawNum) {
+            // Updated links based on the clicked number
             document.getElementById('callLink').href = `tel:${rawNum}`;
             document.getElementById('smsLink').href = `sms:${rawNum}`;
-            // Viber format link
+            
             const viberNum = rawNum.replace('+', '');
             document.getElementById('viberLink').href = `viber://chat?number=${viberNum}`;
 
@@ -337,7 +252,6 @@ END:VCARD`;
             newLink.click();
             document.body.removeChild(newLink);
 
-            // Trigger success toast
             toast.classList.remove('opacity-0', '-translate-y-4');
             setTimeout(() => {
                 toast.classList.add('opacity-0', '-translate-y-4');
