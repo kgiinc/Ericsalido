@@ -1,261 +1,387 @@
 <!DOCTYPE html>
-<html lang="fil">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Business Card - Juan Eric Salido</title>
+    <title>DFNN Digital Business Card - Ramon Garcia</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dfnn: {
+                            blue: '#164194',   
+                            yellow: '#F4B615', 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        /* Transparent para sa iframe embed */
-        html, body {
-            background-color: transparent !important;
-            font-family: 'Montserrat', sans-serif;
-        }
-        
-        /* Contact scaling hover effect */
-        .contact-link {
-            transition: all 0.2s ease-in-out;
-            transform-origin: left center;
+        /* Blinking Cursor */
+        .cursor {
             display: inline-block;
+            width: 3px;
+            background-color: #F4B615; 
+            animation: blink 1s step-end infinite;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            height: 1em;
         }
-        .contact-link:hover, .contact-link:active {
-            transform: scale(1.05);
-            color: #2563eb !important; 
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
         }
-        .contact-icon-wrapper {
-            transition: transform 0.2s ease-in-out;
-        }
-        .group:hover .contact-icon-wrapper, .group:active .contact-icon-wrapper {
-            color: #2563eb;
-            transform: scale(1.15);
+        /* Geometric Shapes */
+        .shape-bottom-right { clip-path: polygon(100% 0, 100% 100%, 0 100%); }
+        .shape-hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }
+        
+        /* Prevent text selection during long press */
+        .no-select {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
     </style>
 </head>
-<body class="bg-transparent m-0 py-4 w-full flex flex-col items-center text-slate-800 selection:bg-blue-200">
+<body class="bg-gray-100 flex items-center justify-center min-h-screen overflow-hidden font-sans relative">
 
-    <!-- Toast Notification -->
-    <div id="toast" class="fixed top-6 bg-emerald-600 text-white px-6 py-3 rounded-full shadow-2xl opacity-0 transform -translate-y-4 transition-all duration-300 z-50 flex items-center gap-2 pointer-events-none font-medium text-sm sm:text-base">
-        <i class="fa-solid fa-circle-check"></i>
-        <span>Contact Info Saved! (vCard Downloaded)</span>
+    <!-- ================= LOADING SCREEN ================= -->
+    <div id="loading-screen" class="fixed inset-0 bg-white z-50 flex flex-col items-center justify-center transition-opacity duration-1000 ease-in-out">
+        <div class="text-center">
+            <h1 class="text-xl md:text-2xl font-bold leading-tight tracking-wide text-dfnn-blue">
+                Technology <br>
+                That <span id="dynamic-text" class="text-dfnn-yellow"></span><span class="cursor"></span> <br>
+                With You
+            </h1>
+        </div>
     </div>
 
-    <!-- Main Container (Portrait Mode) -->
-    <div class="w-full max-w-[340px] px-2 flex flex-col items-center gap-6">
+    <!-- ================= BUSINESS CARD ================= -->
+    <div id="business-card" class="opacity-0 hidden transition-opacity duration-700 ease-in-out relative w-full max-w-sm h-[700px] bg-white shadow-2xl overflow-hidden mx-4 no-select cursor-pointer">
         
-        <!-- Interactive Card (Portrait Height, No Flip) -->
-        <div class="w-full h-[520px] cursor-pointer drop-shadow-[0_15px_30px_rgba(0,0,0,0.2)] bg-white rounded-2xl overflow-hidden relative shadow-inner select-none flex flex-col" id="cardContainer">
-            
-            <!-- Background Geometric Shapes (KGI Colors + Inspiration Layout) -->
-            <!-- Top Right -->
-            <div class="absolute top-[-50px] right-[-30px] w-40 h-24 bg-blue-900 transform rotate-[-25deg] z-0 shadow-lg"></div>
-            <div class="absolute top-[-50px] right-[-60px] w-40 h-24 bg-blue-500 transform rotate-[-25deg] z-0"></div>
-            
-            <!-- Bottom Left/Full Width -->
-            <div class="absolute bottom-[-50px] left-[-30px] w-[130%] h-32 bg-blue-900 transform rotate-[-15deg] z-0 shadow-lg"></div>
-            <div class="absolute bottom-[-65px] left-[-30px] w-[130%] h-32 bg-blue-500 transform rotate-[-15deg] z-0"></div>
-            <div class="absolute bottom-[-80px] left-[-30px] w-[130%] h-32 bg-yellow-500 transform rotate-[-15deg] z-0"></div>
+        <!-- Geometric Backgrounds -->
+        <div class="absolute bottom-0 right-0 w-[80%] h-[35%] bg-dfnn-yellow shape-bottom-right z-0 pointer-events-none"></div>
+        <div class="absolute -bottom-10 -left-10 w-48 h-48 bg-dfnn-blue shape-hexagon opacity-90 z-0 shadow-lg pointer-events-none"></div>
+        <div class="absolute bottom-10 left-12 w-24 h-24 bg-[#1e58c8] shape-hexagon opacity-80 z-0 pointer-events-none"></div>
+        <div class="absolute bottom-0 left-20 w-32 h-32 bg-gray-300 shape-hexagon opacity-50 z-0 pointer-events-none"></div>
+        <div class="absolute top-1/4 left-0 w-full h-[1px] bg-gray-200 rotate-12 z-0 pointer-events-none"></div>
+        <div class="absolute top-1/2 left-0 w-full h-[1px] bg-gray-200 -rotate-12 z-0 pointer-events-none"></div>
 
-            <!-- Top Row: Logo Placeholder -->
-            <div class="absolute top-6 right-6 z-20">
-                <img src="https://lh3.googleusercontent.com/pw/AP1GczOP7FlMe37qUjK84ETgz1lTw5KsZiZZAy9oIZICTMZh5ZMKvvxtgz5nGbo06nitd4QGFnXv9oH_x2IRAWc-T0h9ei60v4qRD96SuvwtQkVZRz2v_Vda_znsd14inoOwhB9pqIFHfyKF1t4foMFWkzqL=w502-h218-s-no-gm?authuser=0" alt="KGI Logo" class="h-8 w-auto object-contain">
+        <!-- Card Content -->
+        <div id="card-info" class="opacity-0 transition-opacity duration-1000 ease-in-out relative w-full h-full z-10 flex flex-col">
+            
+            <div class="pt-12 px-8 text-right flex flex-col items-end pointer-events-none">
+                <img src="image_dbfe7b.jpg" alt="DFNN Logo" class="h-10 mb-3 object-contain">
+                <h2 class="text-2xl font-bold text-dfnn-blue uppercase tracking-wider leading-none">Ramon Garcia</h2>
+                <p class="text-dfnn-yellow text-sm mt-1 uppercase tracking-widest font-semibold">Executive Chairman</p>
             </div>
-            
-            <!-- Content Wrapper -->
-            <div class="relative z-10 flex flex-col h-full px-8 pt-16 pb-8">
-                
-                <!-- Name & Title -->
-                <div class="mb-8 mt-4">
-                    <h1 class="text-[26px] font-bold tracking-tight leading-none uppercase">
-                        <span class="text-blue-600 block">JUAN ERIC</span>
-                        <span class="text-slate-400 font-light block mt-1">SALIDO</span>
-                    </h1>
-                    <p class="text-xs font-semibold text-slate-700 mt-2 uppercase tracking-wide">Executive Vice President</p>
-                    <div class="w-10 h-[3px] bg-blue-500 mt-3 rounded-full"></div>
-                </div>
 
-                <!-- Contact Info Grid (Left Aligned with Icons) -->
-                <div class="flex flex-col gap-5 mt-4">
-                    
-                    <!-- Phone Numbers -->
-                    <div class="flex items-start gap-4 group">
-                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
-                            <i class="fa-solid fa-phone text-[16px]"></i>
-                        </div>
-                        <div class="flex flex-col space-y-1.5">
-                            <div onclick="event.stopPropagation(); showPhoneOptions('+639175367391')" class="contact-link cursor-pointer text-xs font-bold text-slate-700">+63917 536 7391</div>
-                            <div onclick="event.stopPropagation(); showPhoneOptions('+639992280189')" class="contact-link cursor-pointer text-xs font-bold text-slate-700">+63999 228 0189</div>
-                        </div>
-                    </div>
+            <!-- Contacts -->
+            <div class="mt-8 px-8 z-20">
+                <ul class="space-y-4 text-right text-sm text-gray-700 font-medium">
+                    <!-- Phone Menu Trigger -->
+                    <li>
+                        <button onclick="openMenu('phone-menu')" class="flex items-center justify-end gap-3 w-full hover:text-dfnn-blue transition-colors group">
+                            <p class="text-sm pointer-events-none">+63 917 842 1888</p>
+                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                            </div>
+                        </button>
+                    </li>
 
-                    <!-- Emails -->
-                    <div class="flex items-start gap-4 group">
-                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
-                            <i class="fa-solid fa-envelope text-[16px]"></i>
-                        </div>
-                        <div class="flex flex-col space-y-1.5">
-                            <div onclick="event.stopPropagation(); window.location.href='mailto:eric.salido@kgi.com.ph';" class="contact-link cursor-pointer text-xs font-bold text-slate-700">eric.salido@kgi.com.ph</div>
-                            <div onclick="event.stopPropagation(); window.location.href='mailto:kgi.corporate@kgi.com.ph';" class="contact-link cursor-pointer text-xs font-bold text-slate-700">kgi.corporate@kgi.com.ph</div>
-                        </div>
-                    </div>
+                    <!-- Email Menu Trigger -->
+                    <li>
+                        <button onclick="openMenu('email-menu')" class="flex items-center justify-end gap-3 w-full hover:text-dfnn-blue transition-colors group">
+                            <p class="text-sm pointer-events-none">rcgarcia@dfnn.com</p>
+                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                            </div>
+                        </button>
+                    </li>
 
                     <!-- Website -->
-                    <div class="flex items-start gap-4 group">
-                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
-                            <i class="fa-solid fa-globe text-[16px]"></i>
-                        </div>
-                        <div class="flex flex-col space-y-1.5">
-                            <div onclick="event.stopPropagation(); window.open('http://www.fastwin.ph', '_blank');" class="contact-link cursor-pointer text-xs font-bold text-slate-700">www.fastwin.ph</div>
-                        </div>
-                    </div>
-
-                    <!-- Address -->
-                    <div class="flex items-start gap-4 group">
-                        <div class="w-5 flex justify-center text-blue-500 pt-0.5 contact-icon-wrapper">
-                            <i class="fa-solid fa-location-dot text-[16px]"></i>
-                        </div>
-                        <div class="flex flex-col space-y-1.5 pr-2">
-                            <div onclick="event.stopPropagation(); openMap();" class="contact-link cursor-pointer text-xs font-semibold text-slate-600 leading-snug">
-                                PSE Tower, 14F, 5th ave. cor 28 street,<br>Bonifacio Global City, Taguig, Philippines
+                    <li>
+                        <a href="https://www.dfnn.com" target="_blank" class="flex items-center justify-end gap-3 hover:text-dfnn-blue transition-colors group">
+                            <p class="text-sm pointer-events-none">www.dfnn.com</p>
+                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
                             </div>
-                        </div>
-                    </div>
+                        </a>
+                    </li>
 
+                    <!-- Map Menu Trigger -->
+                    <li>
+                        <button onclick="openMenu('map-menu')" class="flex items-start justify-end gap-3 pt-2 w-full hover:text-dfnn-blue transition-colors group text-right">
+                            <div class="text-xs leading-relaxed pointer-events-none">
+                                <p class="font-bold text-gray-800 group-hover:text-dfnn-blue">DFNN Head Office</p>
+                                <p>L2-L5 14/F PSE Tower,</p>
+                                <p>5th Ave cor 28th St,</p>
+                                <p>BGC, Taguig</p>
+                            </div>
+                            <div class="w-7 h-7 rounded-full bg-dfnn-blue text-white flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:scale-110 transition-transform shadow-md pointer-events-none">
+                                <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+                            </div>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Bottom Right Logo -->
+            <div class="absolute bottom-6 right-6 flex items-center gap-2 pointer-events-none">
+                <div class="text-white text-right leading-tight drop-shadow-md">
+                    <span class="font-bold text-lg block tracking-wide">DFNN</span>
+                    <span class="font-semibold text-xs block opacity-90">INC.</span>
                 </div>
             </div>
-        </div>
 
-        <!-- Instructions -->
-        <div class="w-full text-center text-slate-500 text-[11px] sm:text-xs">
-            <p class="animate-pulse bg-slate-100/80 backdrop-blur-sm py-2 px-4 rounded-full inline-block border border-slate-200 shadow-sm">
-                <i class="fa-solid fa-pointer mr-1"></i> Double-tap to save contact info.
-            </p>
-        </div>
-
-    </div>
-
-    <!-- Action Sheet / Modal for Phone Options -->
-    <div id="phoneModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-50 flex items-end justify-center opacity-0 pointer-events-none transition-opacity duration-300" onclick="closePhoneOptions()">
-        <div class="bg-white w-full max-w-md rounded-t-2xl p-6 space-y-4 transform translate-y-full transition-transform duration-300 onclick-stop" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="text-base font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-phone text-blue-600"></i>
-                    <!-- Pinalitan ang display text papuntang "Contact Me" -->
-                    <span>Contact Me</span>
-                </h3>
-                <button onclick="closePhoneOptions()" class="text-slate-400 hover:text-slate-600 p-1 transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+            <!-- Hint for Tap & Hold -->
+            <div class="absolute bottom-4 left-6 text-xs text-white opacity-60 pointer-events-none flex flex-col items-start">
+                <span>Hold to save contact</span>
+                <span>Double tap to restart</span>
             </div>
-            
-            <!-- Options Grid -->
-            <div class="grid grid-cols-3 gap-3">
-                <!-- Viber -->
-                <a id="viberLink" href="#" class="flex flex-col items-center justify-center p-4 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-xl transition-all text-purple-700 group">
-                    <i class="fa-brands fa-viber text-3xl mb-2 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold">Viber</span>
-                </a>
-                <!-- Regular Call -->
-                <a id="callLink" href="#" class="flex flex-col items-center justify-center p-4 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-all text-blue-700 group">
-                    <i class="fa-solid fa-phone-flip text-2xl mb-2.5 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold">Tawag</span>
-                </a>
-                <!-- Text / SMS -->
-                <a id="smsLink" href="#" class="flex flex-col items-center justify-center p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl transition-all text-slate-700 group">
-                    <i class="fa-solid fa-comment-sms text-2xl mb-2.5 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold">Text (SMS)</span>
-                </a>
-            </div>
+
         </div>
     </div>
 
-    <!-- JavaScript Functionalities -->
+    <!-- ================= SLIDE-UP MENUS ================= -->
+    
+    <!-- Backdrop for menus -->
+    <div id="menu-backdrop" onclick="closeAllMenus()" class="fixed inset-0 bg-black/40 z-[90] hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Phone Menu -->
+    <div id="phone-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div> <!-- Drag Handle -->
+        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Let's Connect</h3>
+        <div class="flex justify-center gap-8 w-full px-6">
+            <!-- Viber Icon -->
+            <a href="viber://chat?number=%2B639178421888" class="w-14 h-14 bg-[#7360f2] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M21.5 14.8c-.8-.5-1.9-.3-2.6.4l-1.6 1.7c-4.4-2.1-6.8-4.5-8.9-8.9l1.7-1.6c.7-.7.9-1.8.4-2.6L8.4 1.3C7.9.4 6.7 0 5.8.5L2.9 2C1.7 2.6.8 3.8.4 5.1-.9 9.3 1.1 14.2 4.7 17.8c3.6 3.6 8.5 5.6 12.7 4.3 1.3-.4 2.5-1.3 3.1-2.5l1.5-2.9c.5-.9.1-2.1-.8-2.6l-2.5-1.3z"/></svg>
+            </a>
+            <!-- Call Icon -->
+            <a href="tel:+639178421888" class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+            </a>
+            <!-- Text Icon -->
+            <a href="sms:+639178421888" class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+                <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 5v8a2 2 0 01-2 2h-5l-5 4v-4H4a2 2 0 01-2-2V5a2 2 0 012-2h12a2 2 0 012 2zM7 8H5v2h2V8zm2 0h2v2H9V8zm6 0h-2v2h2V8z" clip-rule="evenodd"></path></svg>
+            </a>
+        </div>
+    </div>
+
+    <!-- Email Menu -->
+    <div id="email-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div>
+        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Let's Connect</h3>
+        <a href="mailto:rcgarcia@dfnn.com" class="w-16 h-16 bg-dfnn-yellow rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+        </a>
+    </div>
+
+    <!-- Map Menu -->
+    <div id="map-menu" class="fixed bottom-0 left-0 w-full bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] z-[100] transform translate-y-full transition-transform duration-300 flex flex-col items-center pb-8 pt-2 slide-menu">
+        <div class="w-12 h-1.5 bg-gray-300 rounded-full mb-4"></div>
+        <h3 class="text-xl font-extrabold text-dfnn-blue mb-6">Visit Us</h3>
+        <a href="https://www.google.com/maps/dir/?api=1&destination=PSE+Tower,+5th+Avenue+corner+28th+Street,+Bonifacio+Global+City,+Taguig" target="_blank" class="w-16 h-16 bg-red-500 rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform">
+            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path></svg>
+        </a>
+    </div>
+
+
+    <!-- ================= JAVASCRIPT ================= -->
     <script>
-        const cardContainer = document.getElementById('cardContainer');
-        const toast = document.getElementById('toast');
-        const phoneModal = document.getElementById('phoneModal');
-        const phoneModalContent = phoneModal.querySelector('.onclick-stop');
-        
-        let lastTap = 0;
+        const words = ["connects", "moves", "grows"];
+        let isAnimating = false;
 
-        // Card Container Click/Tap Manager (Double Tap Save only)
-        cardContainer.addEventListener('click', function(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            
-            if (tapLength < 300 && tapLength > 0) {
-                // Double tap recognized
-                downloadVCard();
-                e.preventDefault();
-            }
-            // Tinanggal na ang single tap for flip
-            lastTap = currentTime;
+        document.addEventListener("DOMContentLoaded", () => {
+            startLoadingSequence();
+            setupInteractions();
+            setupSwipeToClose();
         });
 
-        // Open Map Destination
-        function openMap() {
-            const address = "PSE Tower, 14F, 5th ave. cor 28 street, Bonifacio Global City, Taguig, Philippines";
-            if ((navigator.platform.indexOf("iPhone") != -1) || (navigator.platform.indexOf("iPad") != -1) || (navigator.platform.indexOf("iPod") != -1)) {
-                window.open(`maps://maps.apple.com/?q=${encodeURIComponent(address)}`);
-            } else {
-                window.open(`https://maps.google.com/?q=${encodeURIComponent(address)}`);
+        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        // --- Typing Animation & Transition ---
+        async function startLoadingSequence() {
+            if(isAnimating) return;
+            isAnimating = true;
+
+            const dynamicTextElement = document.getElementById("dynamic-text");
+            const loadingScreen = document.getElementById('loading-screen');
+            const businessCard = document.getElementById('business-card');
+            const cardInfo = document.getElementById('card-info');
+
+            // Reset initial states
+            dynamicTextElement.innerText = "";
+            loadingScreen.style.display = 'flex';
+            loadingScreen.classList.remove('opacity-0');
+            businessCard.classList.add('hidden', 'opacity-0');
+            cardInfo.classList.remove('opacity-100');
+            cardInfo.classList.add('opacity-0');
+
+            const typeSpeed = 100, deleteSpeed = 50, pauseEnd = 1200, pauseStart = 400;
+
+            for (let i = 0; i < words.length; i++) {
+                let word = words[i];
+                for (let j = 0; j <= word.length; j++) {
+                    dynamicTextElement.innerText = word.substring(0, j);
+                    await sleep(typeSpeed);
+                }
+                if (i === words.length - 1) {
+                    await sleep(1500); 
+                    break; 
+                }
+                await sleep(pauseEnd); 
+                for (let j = word.length; j >= 0; j--) {
+                    dynamicTextElement.innerText = word.substring(0, j);
+                    await sleep(deleteSpeed);
+                }
+                await sleep(pauseStart); 
             }
-        }
 
-        // Show Options for Phone Number (Viber, Call, Txt)
-        function showPhoneOptions(rawNum) {
-            // Updated links based on the clicked number
-            document.getElementById('callLink').href = `tel:${rawNum}`;
-            document.getElementById('smsLink').href = `sms:${rawNum}`;
+            // Transition out loading
+            loadingScreen.classList.add('opacity-0');
             
-            const viberNum = rawNum.replace('+', '');
-            document.getElementById('viberLink').href = `viber://chat?number=${viberNum}`;
-
-            // Show animation
-            phoneModal.classList.remove('opacity-0', 'pointer-events-none');
             setTimeout(() => {
-                phoneModalContent.classList.remove('translate-y-full');
-            }, 10);
+                loadingScreen.style.display = 'none';
+                businessCard.classList.remove('hidden');
+                
+                setTimeout(() => {
+                    businessCard.classList.remove('opacity-0');
+                    businessCard.classList.add('opacity-100');
+                    
+                    setTimeout(() => {
+                        cardInfo.classList.remove('opacity-0');
+                        cardInfo.classList.add('opacity-100');
+                        isAnimating = false; // Allow restart
+                    }, 600); 
+                }, 50);
+            }, 1000); 
         }
 
-        function closePhoneOptions() {
-            phoneModalContent.classList.add('translate-y-full');
-            setTimeout(() => {
-                phoneModal.classList.add('opacity-0', 'pointer-events-none');
-            }, 300);
+        // --- Slide Up Menu Logic ---
+        function openMenu(menuId) {
+            const menu = document.getElementById(menuId);
+            const backdrop = document.getElementById('menu-backdrop');
+            
+            backdrop.classList.remove('hidden');
+            setTimeout(() => backdrop.classList.remove('opacity-0'), 10);
+            
+            menu.classList.remove('translate-y-full');
         }
 
-        // vCard Generation & Download Function
+        function closeAllMenus() {
+            const backdrop = document.getElementById('menu-backdrop');
+            const menus = document.querySelectorAll('.slide-menu');
+            
+            menus.forEach(menu => menu.classList.add('translate-y-full'));
+            backdrop.classList.add('opacity-0');
+            
+            setTimeout(() => backdrop.classList.add('hidden'), 300);
+        }
+
+        function setupSwipeToClose() {
+            const menus = document.querySelectorAll('.slide-menu');
+            menus.forEach(menu => {
+                let startY;
+                menu.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                }, {passive: true});
+
+                menu.addEventListener('touchmove', (e) => {
+                    let currentY = e.touches[0].clientY;
+                    if (currentY - startY > 50) { // If swiped down by 50px
+                        closeAllMenus();
+                    }
+                }, {passive: true});
+            });
+        }
+
+        // --- Double Tap & Hold (Long Press) Logic ---
+        function setupInteractions() {
+            const card = document.getElementById('business-card');
+            
+            // Double Tap
+            let lastTap = 0;
+            card.addEventListener('touchend', function(e) {
+                // Prevent trigger if clicking a button inside the card
+                if(e.target.closest('button') || e.target.closest('a')) return;
+
+                let currentTime = new Date().getTime();
+                let tapLength = currentTime - lastTap;
+                
+                if (tapLength < 400 && tapLength > 0) {
+                    startLoadingSequence(); 
+                    e.preventDefault();
+                }
+                lastTap = currentTime;
+            });
+
+            // For Desktop double click
+            card.addEventListener('dblclick', function(e) {
+                if(e.target.closest('button') || e.target.closest('a')) return;
+                startLoadingSequence();
+            });
+
+            // Tap and Hold to Download vCard
+            let pressTimer;
+            
+            const startPress = (e) => {
+                if(e.target.closest('button') || e.target.closest('a')) return;
+                pressTimer = window.setTimeout(downloadVCard, 800); // 800ms hold
+            };
+
+            const cancelPress = () => {
+                clearTimeout(pressTimer);
+            };
+
+            card.addEventListener('touchstart', startPress, {passive: true});
+            card.addEventListener('touchend', cancelPress);
+            card.addEventListener('touchcancel', cancelPress);
+            card.addEventListener('touchmove', cancelPress, {passive: true});
+            
+            card.addEventListener('mousedown', startPress);
+            card.addEventListener('mouseup', cancelPress);
+            card.addEventListener('mouseleave', cancelPress);
+        }
+
+        // --- Generate and Download vCard ---
         function downloadVCard() {
-            const vcardData = `BEGIN:VCARD
+            const vcard = `BEGIN:VCARD
 VERSION:3.0
-N:Salido;Juan Eric;;;
-FN:Juan Eric Salido
-ORG:Kirschner Games International Inc.
-TITLE:Executive Vice President
-TEL;TYPE=CELL,VOICE:+639175367391
-TEL;TYPE=CELL,VOICE:+639992280189
-EMAIL;TYPE=PREF,INTERNET:eric.salido@kgi.com.ph
-EMAIL;TYPE=INTERNET:kgi.corporate@kgi.com.ph
-ADR;TYPE=WORK:;;14F, PSE Tower, 5th Ave cor 28th St;Bonifacio Global City;Taguig;;Philippines
-URL:https://www.fastwin.ph
+FN:Ramon Garcia
+TITLE:Executive Chairman
+ORG:DFNN Inc.
+TEL;TYPE=CELL:+639178421888
+EMAIL:rcgarcia@dfnn.com
+URL:https://www.dfnn.com
+ADR:;;L2-L5 14/F PSE Tower, 5th Ave cor 28th St;Bonifacio Global City;Taguig;;Philippines
 END:VCARD`;
-
-            const blob = new Blob([vcardData], { type: 'text/vcard;charset=utf-8;' });
+            
+            const blob = new Blob([vcard], { type: "text/vcard" });
             const url = URL.createObjectURL(blob);
-            const newLink = document.createElement('a');
-            newLink.href = url;
-            newLink.setAttribute('download', 'Juan_Eric_Salido.vcf');
-            document.body.appendChild(newLink);
-            newLink.click();
-            document.body.removeChild(newLink);
-
-            toast.classList.remove('opacity-0', '-translate-y-4');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', '-translate-y-4');
-            }, 3000);
+            
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "Ramon_Garcia.vcf";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Provide a small visual feedback (vibrate if supported)
+            if (navigator.vibrate) navigator.vibrate(100);
+            alert("Contact downloaded!");
         }
     </script>
 </body>
